@@ -73,10 +73,6 @@ public class Handler {
             app.UseDeveloperExceptionPage();
             app.UseDatabaseErrorPage();
         }
-        else
-        {
-            app.UseExceptionHandler("/Error");
-        }
 
         // app.UseApplicationInsightsRequestTelemetry();
         // app.UseApplicationInsightsExceptionTelemetry();
@@ -84,6 +80,7 @@ public class Handler {
         app.UseStaticFiles();
         // app.UseIdentity();
         app.UseMvc();
+        // app.UseStatusCodePagesWithReExecute("/Home/Errors/{0}");
         // Seed.Initialize(db);
         
         // Enable middleware to serve generated Swagger as a JSON endpoint
