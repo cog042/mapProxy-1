@@ -36,7 +36,9 @@ public class Handler {
     public void ConfigureServices(IServiceCollection services)
     {
 
-        services.AddDbContext<DB>(options => options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+        // services.AddDbContext<DB>(options => options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddDbContext<DB>(options => options.UseInMemoryDatabase());
 
         // services.AddIdentity<User, IdentityRole>()
         //     .AddEntityFrameworkStores<DB>()
