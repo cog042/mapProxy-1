@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.Swagger.Model;
+using Swashbuckle.SwaggerGen.Generator;
 
 public class Handler {
 
@@ -19,7 +21,8 @@ public class Handler {
         var builder = new ConfigurationBuilder()
             .SetBasePath(env.ContentRootPath)
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+            .AddEnvironmentVariables();
 
         // if (env.IsDevelopment())
         // {
@@ -27,43 +30,65 @@ public class Handler {
         //     builder.AddUserSecrets();
         // }
 
-        builder.AddEnvironmentVariables();
         Configuration = builder.Build();
     }
 
     public void ConfigureServices(IServiceCollection services)
     {
 
-        services.AddDbContext<DB>(options =>
-            options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+        services.AddDbContext<DB>(options => options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
         // services.AddIdentity<User, IdentityRole>()
         //     .AddEntityFrameworkStores<DB>()
         //     .AddDefaultTokenProviders();
 
+        // services.AddApplicationInsightsTelemetry(Configuration);
         services.AddMvc();
+
+        // Inject an implementation of ISwaggerProvider with defaulted settings applied
+        services.AddSwaggerGen();
+
+        services.ConfigureSwaggerGen(options =>
+        {
+            options.SingleApiVersion(new Info
+            {
+                Version = "v1",
+                Title = "Simple DB Example",
+                Description = "A sample boilerplate for .NET Core"
+            });
+            options.IgnoreObsoleteActions();
+            options.IgnoreObsoleteProperties();
+            options.DescribeAllEnumsAsStrings();
+        });
     }
 
     public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory logger, DB db) {
-        // var logger = factory.CreateLogger("Catchall Endpoint");
         logger.AddConsole(Configuration.GetSection("Logging"));
         logger.AddDebug();
 
         if (env.IsDevelopment())
         {
-            // app.UseDeveloperExceptionPage();
-            // app.UseDatabaseErrorPage();
-            // app.UseBrowserLink();
+            app.UseDeveloperExceptionPage();
+            app.UseDatabaseErrorPage();
         }
         else
         {
             app.UseExceptionHandler("/Error");
         }
 
+        // app.UseApplicationInsightsRequestTelemetry();
+        // app.UseApplicationInsightsExceptionTelemetry();
+
         app.UseStaticFiles();
         // app.UseIdentity();
         app.UseMvc();
         // Seed.Initialize(db);
+        
+        // Enable middleware to serve generated Swagger as a JSON endpoint
+        app.UseSwagger();
+
+        // Enable middleware to serve swagger-ui assets (HTML, JS, CSS etc.)
+        app.UseSwaggerUi();
     }
 
 }

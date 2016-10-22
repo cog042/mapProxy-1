@@ -19,6 +19,11 @@ public class DB : DbContext {
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
         // optionsBuilder.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+        // Sqlite can also take other connection strings; 
+        // Exeternal data sources can also be used:
+        // i.e. 
+        // @"Data Source=d:\otherdrive.db"
+        // @"Data Source=http://...."
         optionsBuilder.UseSqlite("Filename=./app.db");
     }
 
@@ -50,31 +55,32 @@ public class Post
 
 public static class Seed
 {
-    public static void Initialize(DB context)
+    public static void Initialize(DB db)
     {
-        context.Database.EnsureCreated();
+        db.Database.EnsureCreated();
+        db.Database.EnsureDeleted();
         Console.WriteLine("-----------------------");
-        Console.WriteLine(context.Blogs.ToList().Count);
-        Console.WriteLine(context.Posts.ToList().Count);
+        Console.WriteLine(db.Blogs.ToList().Count);
+        Console.WriteLine(db.Posts.ToList().Count);
 
-        foreach(var b in context.Blogs.ToList()){
+        foreach(var b in db.Blogs.ToList()){
             Console.WriteLine($"- {b.Url}, {b.Posts.ToList().Count}");
         }
         
         // Look for any Posts.
-        if (context.Posts.Any())
+        if (db.Posts.Any())
         {
             return; // DB has been seeded already
         }
         
         List<Post> posts = new List<Post>();
         Blog mine = new Blog {Url = "mkeas.org"};
-        context.Blogs.Add(mine);
+        db.Blogs.Add(mine);
         for(var i = 0; i < 10; i++){
-            context.Posts.Add(new Post { Title = $"Test Post {i}", Content = $"Test Content {i}", Blog = mine }); // Date=DateTime.Parse("2005-09-01")},
+            db.Posts.Add(new Post { Title = $"Test Post {i}", Content = $"Test Content {i}", Blog = mine }); // Date=DateTime.Parse("2005-09-01")},
         }
 
-        // Console.WriteLine(context.Database);
-        context.SaveChanges();
+        // Console.WriteLine(db.Database);
+        db.SaveChanges();
     }
 }

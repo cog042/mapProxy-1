@@ -15,8 +15,18 @@
 9. if at any point you change a model, rerun steps 5 and 6
 10. open `http://localhost:5000` to view local server
 11. to deploy:
+
+    To https://now.sh:
     - `npm install -g now`
     - from project folder: `now`
+    - open the url provided
+
+    To https://heroku.com
+    - install the heroku CLI (https://devcenter.heroku.com/articles/heroku-command-line)
+    - (update and commit all your local git files)
+    - `heroku create --buildpack http://github.com/noliar/dotnet-buildpack.git`
+    - `git push heroku master`
+    - `heroku open`
 
 # Support
 
