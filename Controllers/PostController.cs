@@ -1,8 +1,11 @@
+using System;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
+using System.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
-/* 
+/*
 
 A route can return a view, or a status message with data
 
@@ -45,7 +48,7 @@ public IActionResult GetPosts(string id, string? username){...}
 GET params are passed as arguments to the Route method
 
 [Route("/posts")]
-public IActionResult Get(string filter = "tutorials"){ 
+public IActionResult Get(string filter = "tutorials"){
     // if ?filter=videos is in the URL, filter above becomes "videos"
 }
 
@@ -66,7 +69,7 @@ class MyController : Controller {
         if(id.HasValue)
             return Ok(db.Posts.FIrstOrDefault(e => e.Id === id.Value));
         // else return all items in the collection
-        return Ok(db.Posts); 
+        return Ok(db.Posts);
     }
 }
 
@@ -108,12 +111,17 @@ public class PostController : Controller
     }
 
     [HttpGet]
-    public IActionResult Get() => 
+    public IActionResult Get() =>
         Ok(db.Posts.OrderBy(p => p.Title).ToList());
 
     [HttpGet("{id}")]
     public IActionResult Get(int id) =>
         Ok(db.Posts.FirstOrDefault(p => p.PostId == id));
+
+    [HttpGet("test/{id}")]
+    public IActionResult SQL(int id) {
+        return Ok(db.Posts.FromSql($"select * from dbo.Post where PostId = {id}").ToList()); // only works with SQL, not in-memory
+    }
 
     [HttpPost]
     public IActionResult Post([FromBody]Post p){

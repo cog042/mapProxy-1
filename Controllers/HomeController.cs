@@ -1,11 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
 
+internal class Student {
+    public string name;
+}
+
 [Route("/")]
 public class HomeController : Controller
 {
     [HttpGet]
     public IActionResult Root(){
-        return Ok("ok.");
+        return Ok("Ok.");
     }
 
     [HttpGet("Home/Index")]
@@ -26,8 +30,8 @@ public class HomeController : Controller
     }
 
     [HttpGet("/Errors/{errCode}")]
-    public IActionResult Errors(string errCode) 
-    { 
+    public IActionResult Errors(string errCode)
+    {
         return (errCode == "500" | errCode == "404")
             ? View($"~/Views/Home/Error/{errCode}.cshtml")
             : View("~/Views/Shared/Error.cshtml");
