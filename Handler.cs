@@ -47,6 +47,8 @@ public class Handler {
         // services.AddApplicationInsightsTelemetry(Configuration);
         services.AddMvc();
 
+        // services.AddSingleton<IRepository<Post>, PostRepo>();
+
         // Inject an implementation of ISwaggerProvider with defaulted settings applied
         services.AddSwaggerGen();
 

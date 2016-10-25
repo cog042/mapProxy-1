@@ -12,21 +12,12 @@ public class HomeController : Controller
         return Ok("Ok.");
     }
 
-    [HttpGet("Home/Index")]
-    public IActionResult Index()
-    {
-        return View(new { Username = "you" });
-    }
-
-    [HttpGet("Home/Index/test/{username?}")]
+    [HttpGet("Home/Index/{username?}")]
     public IActionResult Index(string username = "you")
     {
-        return View(new { Username = username });
-    }
-
-    [HttpGet("Home/Greet/{username}")]
-    public IActionResult Greet(string username){
-        return Ok(new { Username = username });
+        ViewData["Message"] = "Some extra info can be sent to the view";
+        ViewData["Username"] = username;
+        return View(); // View method takes an object as a "model", typicall called a ViewModel
     }
 
     [HttpGet("/Errors/{errCode}")]
