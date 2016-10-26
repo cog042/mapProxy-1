@@ -48,6 +48,7 @@ public class Handler {
         services.AddMvc();
 
         // services.AddSingleton<IRepository<Post>, PostRepo>();
+        services.AddSingleton<IGoogleRepo, GoogleRepo>();
 
         // Inject an implementation of ISwaggerProvider with defaulted settings applied
         services.AddSwaggerGen();
