@@ -88,6 +88,7 @@ public class Result
 public class Google {
     public List<Result> results { get; set; }
     public string status { get; set; }
+    
 }
 
 public class GoogleRepo : IGoogleRepo
