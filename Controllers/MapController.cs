@@ -17,9 +17,17 @@ public class MapController : Controller {
         googleApi = g;
     }
     
-    [HttpGet("{search}")]
+    [HttpGet("{search}/html")]
     public async Task<IActionResult> Get(string search, [FromQuery]string size = "800x600", [FromQuery]int zoom = 13){
-        
+        return View(await Load(search, size, zoom));
+    }
+
+    [HttpGet("{search}")]
+    public async Task<IActionResult> GetJSON(string search, [FromQuery]string size = "800x600", [FromQuery]int zoom = 13){
+        return Ok(await Load(search, size, zoom));
+    }
+
+    public async Task<GoogleStaticMaps> Load(string search, string size, int zoom){
         var key = "AIzaSyCdNJl4Lm98QbzuYKdbcn9gCYawkmc_tlk";
         var url = $"https://maps.googleapis.com/maps/api/geocode/json?address={search}&key={key}";
         Google result = await googleApi.GetData<Google>(url);
@@ -27,11 +35,11 @@ public class MapController : Controller {
             double lng = result.results.ElementAt(0).geometry.location.lng;
             String LatLng = (lat.ToString()+","+lng.ToString());
         
-        // return Ok(new {search = search, size = size, result = result});
         GoogleStaticMaps GSmaps = new GoogleStaticMaps();
+        
         GSmaps.imageUrl = $"https://maps.googleapis.com/maps/api/staticmap?zoom={zoom}&size={size}&maptype=roadmap&markers=color:red|label:X|{LatLng}";
-        GSmaps.timestamp = DateTime.Now.ToString();
-        GSmaps.searchTerm = search;
+        GSmaps.timestamp = DateTime.Now.ToString();   
+        GSmaps.searchTerm = search;                     //ViewBag add 32
         GSmaps.zoomLevel = zoom;
         GSmaps.size = new Size {
             width = Int32.Parse(size.Split(new char[]{ 'x' })[0]),
@@ -47,8 +55,8 @@ public class MapController : Controller {
                 }
             }
         };
-        return Ok(GSmaps);
-        // Console.WriteLine(googleApi.ToJSON(GSmaps));
+
+        return GSmaps;
     }
 }
 
