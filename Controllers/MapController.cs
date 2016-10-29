@@ -7,8 +7,9 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using GoogleStaticMapsX;
 
+//interesting way of breaking up the classes and functions to get to the view windows ~Chris
 
-[Route("/api/map")]
+[Route("/api/map")]   
 public class MapController : Controller {
     private IGoogleRepo googleApi;
     private IGoogleSMRepo googleStatic;
@@ -17,7 +18,7 @@ public class MapController : Controller {
         googleApi = g;
     }
     
-    [HttpGet("{search}/html")]
+    [HttpGet("{search}/html")] 
     public async Task<IActionResult> Get(string search, [FromQuery]string size = "800x600", [FromQuery]int zoom = 13){
         return View(await Load(search, size, zoom));
     }
@@ -56,7 +57,7 @@ public class MapController : Controller {
             }
         };
 
-        return GSmaps;
+        return GSmaps; //
     }
 }
 
